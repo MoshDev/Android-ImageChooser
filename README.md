@@ -10,7 +10,7 @@ or SD-Card) and return the `Bitmap` image back.
 
 Usage
 --------
-Define private class variable of type `ImageChooser`
+Define private class variable of type `ImageChooser` in your `Activity`
 
     private ImageChooser chooser;
 
