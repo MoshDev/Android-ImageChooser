@@ -9,7 +9,13 @@ or SD-Card) and return the `Bitmap` image back.
 
 Usage
 --------
-Initialize it
+
+Put these two permissions inside your AndroidManifest
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+Initialize ImageChooser inside your `Activity`
 
     chooser = new AlertDialogImageChooser(this, CHOOSER_IMAGE_REQUEST_CODE); // CHOOSER_IMAGE_REQUEST_CODE is some number
     chooser.saveImageTo(StorageOption.SDCARD, "myDirectory", "myFabulousImage"); // Optional
@@ -42,3 +48,6 @@ Last step is to override `onActivityResult` and call chooser method which has th
 			});
 		}
 	}
+
+### SD-Card
+SD-Card is necessary to capture image from camera, otherwise exception will be thrown.
