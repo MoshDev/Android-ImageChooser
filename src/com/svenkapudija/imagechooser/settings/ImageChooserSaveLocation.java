@@ -6,28 +6,24 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.svenkapudija.imagechooser.ImageExtension;
-import com.svenkapudija.imagechooser.SaveLocation;
+import com.svenkapudija.imagechooser.StorageOption;
 
 public class ImageChooserSaveLocation {
 
-	private SaveLocation saveLocation;
+	private StorageOption storageOption;
 	private String path;
 	
-	public ImageChooserSaveLocation(SaveLocation saveLocation, String directory, String imageName, ImageExtension extension) {
-		this.saveLocation = saveLocation;
+	public ImageChooserSaveLocation(StorageOption storageOption, String directory, String imageName, ImageExtension extension) {
+		this.storageOption = storageOption;
 		this.path =  directory + "/" + imageName + "." + extension.toString().toLowerCase();
 	}
 	
-	public ImageChooserSaveLocation(SaveLocation saveLocation, String directory, String imageName) {
+	public ImageChooserSaveLocation(StorageOption saveLocation, String directory, String imageName) {
 		this(saveLocation, directory, imageName, ImageExtension.JPG);
 	}
 	
-	public SaveLocation getSaveLocation() {
-		return saveLocation;
-	}
-	
 	public File getFile(Context context) {
-		if(saveLocation == SaveLocation.SDCARD) {
+		if(storageOption == StorageOption.SDCARD) {
 			return new File(
 					Environment.getExternalStorageDirectory().getAbsolutePath() +
 					"/" + path

@@ -47,8 +47,8 @@ public abstract class GeneralImageChooser implements ImageChooser {
 	}
 	
 	@Override
-	public ImageChooser saveImageTo(SaveLocation saveLocation, String directory, String imageName) {
-		this.saveSettings = new ImageChooserSaveLocation(saveLocation, directory, imageName);
+	public ImageChooser saveImageTo(StorageOption storageOption, String directory, String imageName) {
+		this.saveSettings = new ImageChooserSaveLocation(storageOption, directory, imageName);
 		return this;
 	}
 	
@@ -154,7 +154,7 @@ public abstract class GeneralImageChooser implements ImageChooser {
 		
 		// If it's null, create a temporary file (later it will be deleted)
 		if(saveSettings == null) {
-			tmpCameraSaveLocation = new ImageChooserSaveLocation(SaveLocation.SDCARD, "tmp", Long.toString(new Date().getTime()));
+			tmpCameraSaveLocation = new ImageChooserSaveLocation(StorageOption.SDCARD, "tmp", Long.toString(new Date().getTime()));
 			saveLocation = tmpCameraSaveLocation.getFile(activity);
 		} else {
 			saveLocation = saveSettings.getFile(activity);

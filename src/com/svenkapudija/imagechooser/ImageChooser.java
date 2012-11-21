@@ -8,7 +8,7 @@ import android.content.Intent;
 public interface ImageChooser {
 
 	public ImageChooser saveImageTo(ImageChooserSaveLocation saveSettings);
-	public ImageChooser saveImageTo(SaveLocation saveLocation, String directory, String imageName);
+	public ImageChooser saveImageTo(StorageOption saveLocation, String directory, String imageName);
 	
 	public void show();
 	public void openGallery();

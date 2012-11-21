@@ -14,7 +14,7 @@ import com.svenkapudija.imagechooser.AlertDialogImageChooser;
 import com.svenkapudija.imagechooser.ImageChooser;
 import com.svenkapudija.imagechooser.ImageChooserListener;
 import com.svenkapudija.imagechooser.R;
-import com.svenkapudija.imagechooser.SaveLocation;
+import com.svenkapudija.imagechooser.StorageOption;
 
 public class DemoActivity extends Activity {
 
@@ -32,7 +32,7 @@ public class DemoActivity extends Activity {
 		
 		// Initialize it
 		chooser = new AlertDialogImageChooser(this, 100);
-		chooser.saveImageTo(SaveLocation.SDCARD, "myDirectory", "myFabulousImage");
+		chooser.saveImageTo(StorageOption.SDCARD, "myDirectory", "myFabulousImage");
 		
 		chooseImage.setOnClickListener(new OnClickListener() {
 			@Override
