@@ -96,14 +96,22 @@ public abstract class GeneralImageChooser implements ImageChooser {
 							}
 						}
 					} else if (source == ImageSource.CAMERA) {
+						File tmpFile = tmpCameraSaveLocation.getFile(activity);
+						photo = BitmapFactory.decodeFile(tmpFile.getAbsolutePath());
+						
 						if(saveSettings != null) {
 							File file = saveSettings.getFile(activity);
-							photo = BitmapFactory.decodeFile(file.getAbsolutePath());
-						} else {
-							File file = tmpCameraSaveLocation.getFile(activity);
-							photo = BitmapFactory.decodeFile(file.getAbsolutePath());
-							file.delete();
+							
+							try {
+								writeToFile(photo, file);
+							} catch (IOException e) {
+								e.printStackTrace();
+								errorMessage = "ImageSource: " + source + " - IOException at " + file.getAbsolutePath() + ".";
+								return null;
+							}
 						}
+						
+						tmpFile.delete();
 					} else {
 						// Unknown source
 						errorMessage = "Unknown image source.";
@@ -150,21 +158,14 @@ public abstract class GeneralImageChooser implements ImageChooser {
 			throw new ImageChooserException("SDCard is not mounted.");
 		}
 		
-		File saveLocation = null;
-		
-		// If it's null, create a temporary file (later it will be deleted)
-		if(saveSettings == null) {
-			tmpCameraSaveLocation = new ImageChooserSaveLocation(StorageOption.SDCARD, "tmp", Long.toString(new Date().getTime()));
-			saveLocation = tmpCameraSaveLocation.getFile(activity);
-		} else {
-			saveLocation = saveSettings.getFile(activity);
-		}
+		tmpCameraSaveLocation = new ImageChooserSaveLocation(StorageOption.SDCARD, "tmp", Long.toString(new Date().getTime()));
+		File saveTo = tmpCameraSaveLocation.getFile(activity);
 		
 		// Create directories
-		new File(saveLocation.getParent()).mkdirs();
+		new File(saveTo.getParent()).mkdirs();
 		
 		Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(saveLocation));
+		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(saveTo));
 		activity.startActivityForResult(cameraIntent, requestCode);
 	}
 	

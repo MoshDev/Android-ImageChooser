@@ -32,7 +32,7 @@ public class DemoActivity extends Activity {
 		
 		// Initialize it
 		chooser = new AlertDialogImageChooser(this, 100);
-		chooser.saveImageTo(StorageOption.SDCARD, "myDirectory", "myFabulousImage");
+		chooser.saveImageTo(StorageOption.INTERNAL_MEMORY, "myDirectory", "myFabulousImage");
 		
 		chooseImage.setOnClickListener(new OnClickListener() {
 			@Override
