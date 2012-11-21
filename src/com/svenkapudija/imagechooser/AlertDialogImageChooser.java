@@ -7,12 +7,11 @@ import android.content.DialogInterface.OnClickListener;
 
 import com.svenkapudija.imagechooser.exceptions.ImageChooserException;
 import com.svenkapudija.imagechooser.settings.AlertDialogImageChooserSettings;
-import com.svenkapudija.imagechooser.settings.ImageChooserSaveSettings;
 
 public class AlertDialogImageChooser extends GeneralImageChooser {
 
-	public AlertDialogImageChooser(Activity activity, int requestCode, AlertDialogImageChooserSettings settings, ImageChooserSaveSettings saveSettings) {
-		super(activity, requestCode, settings, saveSettings);
+	public AlertDialogImageChooser(Activity activity, int requestCode, AlertDialogImageChooserSettings settings) {
+		super(activity, requestCode, settings);
 		
 		if(settings == null) {
 			this.settings = new AlertDialogImageChooserSettings(
@@ -23,8 +22,8 @@ public class AlertDialogImageChooser extends GeneralImageChooser {
 		}
 	}
 	
-	public AlertDialogImageChooser(Activity activity, int requestCode, ImageChooserSaveSettings saveSettings) {
-		this(activity, requestCode, null, saveSettings);
+	public AlertDialogImageChooser(Activity activity, int requestCode) {
+		this(activity, requestCode, null);
 	}
 	
 	@Override

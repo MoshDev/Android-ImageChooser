@@ -14,7 +14,7 @@ import com.svenkapudija.imagechooser.AlertDialogImageChooser;
 import com.svenkapudija.imagechooser.ImageChooser;
 import com.svenkapudija.imagechooser.ImageChooserListener;
 import com.svenkapudija.imagechooser.R;
-import com.svenkapudija.imagechooser.settings.ImageChooserSaveSettings;
+import com.svenkapudija.imagechooser.SaveLocation;
 
 public class DemoActivity extends Activity {
 
@@ -31,7 +31,8 @@ public class DemoActivity extends Activity {
 		imageView = (ImageView) findViewById(R.id.imageview_image);
 		
 		// Initialize it
-		chooser = new AlertDialogImageChooser(this, 100, new ImageChooserSaveSettings("imageChooser", "myImage2"));
+		chooser = new AlertDialogImageChooser(this, 100);
+		chooser.saveImageTo(SaveLocation.SDCARD, "myDirectory", "myFabulousImage");
 		
 		chooseImage.setOnClickListener(new OnClickListener() {
 			@Override
@@ -53,7 +54,7 @@ public class DemoActivity extends Activity {
 			
 			@Override
 			public void onError(String message) {
-				// Something bad happend :(
+				// Something bad happened :(
 				Toast.makeText(DemoActivity.this, message, Toast.LENGTH_LONG).show();
 			}
 		});

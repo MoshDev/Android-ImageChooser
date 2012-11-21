@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -19,7 +21,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 
 import com.svenkapudija.imagechooser.exceptions.ImageChooserException;
-import com.svenkapudija.imagechooser.settings.ImageChooserSaveSettings;
+import com.svenkapudija.imagechooser.settings.ImageChooserSaveLocation;
 import com.svenkapudija.imagechooser.settings.ImageChooserSettings;
 
 public abstract class GeneralImageChooser implements ImageChooser {
@@ -27,13 +29,27 @@ public abstract class GeneralImageChooser implements ImageChooser {
 	protected Activity activity;
 	protected int requestCode;
 	protected ImageChooserSettings settings;
-	protected ImageChooserSaveSettings saveSettings;
 	
-	public GeneralImageChooser(Activity activity, int requestCode, ImageChooserSettings settings, ImageChooserSaveSettings saveSettings) {
+	private ImageChooserSaveLocation tmpCameraSaveLocation;
+	private ImageChooserSaveLocation saveSettings;
+	
+	private ImageSource source;
+	
+	public GeneralImageChooser(Activity activity, int requestCode, ImageChooserSettings settings) {
 		this.activity = activity;
 		this.requestCode = requestCode;
 		this.settings = settings;
+	}
+	
+	public ImageChooser saveImageTo(ImageChooserSaveLocation saveSettings) {
 		this.saveSettings = saveSettings;
+		return this;
+	}
+	
+	@Override
+	public ImageChooser saveImageTo(SaveLocation saveLocation, String directory, String imageName) {
+		this.saveSettings = new ImageChooserSaveLocation(saveLocation, directory, imageName);
+		return this;
 	}
 	
 	@Override
@@ -55,27 +71,39 @@ public abstract class GeneralImageChooser implements ImageChooser {
 				protected Bitmap doInBackground(Integer... params) {
 					Bitmap photo = null;
 
-					if (getSource(data) == ImageSource.GALLERY) {
+					if (source == ImageSource.GALLERY) {
 						try {
 							photo = Media.getBitmap(activity.getContentResolver(), data.getData());
 						} catch (FileNotFoundException e1) {
 							e1.printStackTrace();
-							errorMessage = "ImageSource: GALLERY - could not find a file at " + data.toString() + ".";
+							errorMessage = "ImageSource: " + source + " - could not find a file at " + data.toString() + ".";
 							return null;
 						} catch (IOException e1) {
 							e1.printStackTrace();
-							errorMessage = "ImageSource: GALLERY - IOException at " + data.toString() + ".";
+							errorMessage = "ImageSource: " + source + " - IOException at " + data.toString() + ".";
 							return null;
 						}
-					} else if (getSource(data) == ImageSource.CAMERA) {
-						File file = new File(
-								Environment.getExternalStorageDirectory().getAbsolutePath() +
-								"/" + saveSettings.getPath() + "/" +
-								saveSettings.getImageName() + ".jpg"
-						);
 						
-						photo = BitmapFactory.decodeFile(file.getAbsolutePath());
-						writeToFile(photo, file);
+						if(saveSettings != null) {
+							File file = saveSettings.getFile(activity);
+							
+							try {
+								writeToFile(photo, file);
+							} catch (IOException e) {
+								e.printStackTrace();
+								errorMessage = "ImageSource: " + source + " - IOException at " + file.getAbsolutePath() + ".";
+								return null;
+							}
+						}
+					} else if (source == ImageSource.CAMERA) {
+						if(saveSettings != null) {
+							File file = saveSettings.getFile(activity);
+							photo = BitmapFactory.decodeFile(file.getAbsolutePath());
+						} else {
+							File file = tmpCameraSaveLocation.getFile(activity);
+							photo = BitmapFactory.decodeFile(file.getAbsolutePath());
+							file.delete();
+						}
 					} else {
 						// Unknown source
 						errorMessage = "Unknown image source.";
@@ -85,29 +113,13 @@ public abstract class GeneralImageChooser implements ImageChooser {
 					return photo;
 				}
 				
-				private void writeToFile(Bitmap photo, File file) {
+				private void writeToFile(Bitmap photo, File file) throws IOException {
 					ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 			    	photo.compress(CompressFormat.JPEG, 100, bytes);
 			    	
-					try {
-						FileOutputStream fos = new FileOutputStream(file);
-						fos.write(bytes.toByteArray());
-						fos.close();
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-						errorMessage = "Writing image to disk - could not find a file at " + file.getAbsolutePath() + ".";
-					} catch (IOException e1) {
-						e1.printStackTrace();
-						errorMessage = "Writing image to disk - IOException at " + file.getAbsolutePath() + ".";
-					}
-				}
-				
-				private ImageSource getSource(Intent data) {
-					if(data == null) {
-						return ImageSource.CAMERA;
-					} else {
-						return ImageSource.GALLERY;
-					}
+					FileOutputStream fos = new FileOutputStream(file);
+					fos.write(bytes.toByteArray());
+					fos.close();
 				}
 				
 				@Override
@@ -128,27 +140,47 @@ public abstract class GeneralImageChooser implements ImageChooser {
 	}
 	
 	public void openCamera() throws ImageChooserException {
+		source = ImageSource.CAMERA;
+		
+		if(isWriteExternalEnabled() == false) {
+			throw new ImageChooserException("You don't have WRITE_EXTERNAL_STORAGE permission enabled in Android Manifest.");
+		}
+		
 		if(isSDCardAvailable() == false) {
 			throw new ImageChooserException("SDCard is not mounted.");
 		}
 		
-		Intent cameraIntent = null;
-		File file = new File(
-				Environment.getExternalStorageDirectory().getAbsolutePath() +
-				"/" + saveSettings.getPath()
-		);
-		file.mkdirs();
+		File saveLocation = null;
 		
-		cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(file, saveSettings.getImageName() + ".jpg")));
+		// If it's null, create a temporary file (later it will be deleted)
+		if(saveSettings == null) {
+			tmpCameraSaveLocation = new ImageChooserSaveLocation(SaveLocation.SDCARD, "tmp", Long.toString(new Date().getTime()));
+			saveLocation = tmpCameraSaveLocation.getFile(activity);
+		} else {
+			saveLocation = saveSettings.getFile(activity);
+		}
+		
+		// Create directories
+		new File(saveLocation.getParent()).mkdirs();
+		
+		Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+		cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(saveLocation));
 		activity.startActivityForResult(cameraIntent, requestCode);
 	}
 	
 	public void openGallery() {
+		source = ImageSource.GALLERY;
+		
 		Intent cameraIntent = null;
 		cameraIntent = new Intent(Intent.ACTION_GET_CONTENT);
 		cameraIntent.setType("image/*");
 		activity.startActivityForResult(cameraIntent, requestCode);
+	}
+	
+	private boolean isWriteExternalEnabled() {
+	    String permission = "android.permission.WRITE_EXTERNAL_STORAGE";
+	    int res = activity.checkCallingOrSelfPermission(permission);
+	    return res == PackageManager.PERMISSION_GRANTED;            
 	}
 	
 	private boolean isSDCardAvailable() {
