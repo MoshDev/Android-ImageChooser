@@ -4,8 +4,7 @@
 What is Android ImageChooser?
 --------
 I'm pretty sure that name is self-descriptive - the idea is to have simple library which will manage choosing images
-from different sources (`Gallery`, `Camera`), maybe `save it` and `resize it` (via
-[Android ImageResizer](https://github.com/svenkapudija/Android-ImageResizer) library) to some location (internal memory
+from different sources (`Gallery`, `Camera`), maybe `save it` to some location (internal memory
 or SD-Card) and return the `Bitmap` image back.
 
 Usage
