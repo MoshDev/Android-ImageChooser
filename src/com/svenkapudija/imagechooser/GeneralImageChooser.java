@@ -53,98 +53,96 @@ public abstract class GeneralImageChooser implements ImageChooser {
 	}
 	
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, final Intent data, final ImageChooserListener listener) {
-		if (requestCode == this.requestCode && resultCode == Activity.RESULT_OK) {
-			new AsyncTask<Integer, Integer, Bitmap>() {
+	public void onActivityResult(final Intent data, final ImageChooserListener listener) {
+		new AsyncTask<Integer, Integer, Bitmap>() {
 
-				private String errorMessage;
-				private ProgressDialog dialog;
-				
-				@Override
-				protected void onPreExecute() {
-					if(settings.showProgressDialog()) {
-						dialog = ProgressDialog.show(activity, null, settings.getProgressDialogMessage(), true, false);
-					}
-				};
-				
-				@Override
-				protected Bitmap doInBackground(Integer... params) {
-					Bitmap photo = null;
+			private String errorMessage;
+			private ProgressDialog dialog;
+			
+			@Override
+			protected void onPreExecute() {
+				if(settings.showProgressDialog()) {
+					dialog = ProgressDialog.show(activity, null, settings.getProgressDialogMessage(), true, false);
+				}
+			};
+			
+			@Override
+			protected Bitmap doInBackground(Integer... params) {
+				Bitmap photo = null;
 
-					if (source == ImageSource.GALLERY) {
-						try {
-							photo = Media.getBitmap(activity.getContentResolver(), data.getData());
-						} catch (FileNotFoundException e1) {
-							e1.printStackTrace();
-							errorMessage = "ImageSource: " + source + " - could not find a file at " + data.toString() + ".";
-							return null;
-						} catch (IOException e1) {
-							e1.printStackTrace();
-							errorMessage = "ImageSource: " + source + " - IOException at " + data.toString() + ".";
-							return null;
-						}
-						
-						if(saveSettings != null) {
-							File file = saveSettings.getFile(activity);
-							
-							try {
-								writeToFile(photo, file);
-							} catch (IOException e) {
-								e.printStackTrace();
-								errorMessage = "ImageSource: " + source + " - IOException at " + file.getAbsolutePath() + ".";
-								return null;
-							}
-						}
-					} else if (source == ImageSource.CAMERA) {
-						File tmpFile = tmpCameraSaveLocation.getFile(activity);
-						photo = BitmapFactory.decodeFile(tmpFile.getAbsolutePath());
-						
-						if(saveSettings != null) {
-							File file = saveSettings.getFile(activity);
-							
-							try {
-								writeToFile(photo, file);
-							} catch (IOException e) {
-								e.printStackTrace();
-								errorMessage = "ImageSource: " + source + " - IOException at " + file.getAbsolutePath() + ".";
-								return null;
-							}
-						}
-						
-						tmpFile.delete();
-					} else {
-						// Unknown source
-						errorMessage = "Unknown image source.";
+				if (source == ImageSource.GALLERY) {
+					try {
+						photo = Media.getBitmap(activity.getContentResolver(), data.getData());
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+						errorMessage = "ImageSource: " + source + " - could not find a file at " + data.toString() + ".";
+						return null;
+					} catch (IOException e1) {
+						e1.printStackTrace();
+						errorMessage = "ImageSource: " + source + " - IOException at " + data.toString() + ".";
 						return null;
 					}
-
-					return photo;
-				}
-				
-				private void writeToFile(Bitmap photo, File file) throws IOException {
-					ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-			    	photo.compress(CompressFormat.JPEG, 100, bytes);
-			    	
-					FileOutputStream fos = new FileOutputStream(file);
-					fos.write(bytes.toByteArray());
-					fos.close();
-				}
-				
-				@Override
-				protected void onPostExecute(Bitmap result) {
-					super.onPostExecute(result);
 					
-					if(dialog != null)
-						dialog.cancel();
-					
-					if(result == null) {
-						listener.onError(errorMessage);
-					} else {
-						listener.onResult(result);
+					if(saveSettings != null) {
+						File file = saveSettings.getFile(activity);
+						
+						try {
+							writeToFile(photo, file);
+						} catch (IOException e) {
+							e.printStackTrace();
+							errorMessage = "ImageSource: " + source + " - IOException at " + file.getAbsolutePath() + ".";
+							return null;
+						}
 					}
+				} else if (source == ImageSource.CAMERA) {
+					File tmpFile = tmpCameraSaveLocation.getFile(activity);
+					photo = BitmapFactory.decodeFile(tmpFile.getAbsolutePath());
+					
+					if(saveSettings != null) {
+						File file = saveSettings.getFile(activity);
+						
+						try {
+							writeToFile(photo, file);
+						} catch (IOException e) {
+							e.printStackTrace();
+							errorMessage = "ImageSource: " + source + " - IOException at " + file.getAbsolutePath() + ".";
+							return null;
+						}
+					}
+					
+					tmpFile.delete();
+				} else {
+					// Unknown source
+					errorMessage = "Unknown image source.";
+					return null;
 				}
-			}.execute();
-		}
+
+				return photo;
+			}
+			
+			private void writeToFile(Bitmap photo, File file) throws IOException {
+				ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		    	photo.compress(CompressFormat.JPEG, 100, bytes);
+		    	
+				FileOutputStream fos = new FileOutputStream(file);
+				fos.write(bytes.toByteArray());
+				fos.close();
+			}
+			
+			@Override
+			protected void onPostExecute(Bitmap result) {
+				super.onPostExecute(result);
+				
+				if(dialog != null)
+					dialog.cancel();
+				
+				if(result == null) {
+					listener.onError(errorMessage);
+				} else {
+					listener.onResult(result);
+				}
+			}
+		}.execute();
 	}
 	
 	public void openCamera() throws ImageChooserException {

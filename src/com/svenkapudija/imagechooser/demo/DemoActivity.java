@@ -18,6 +18,7 @@ import com.svenkapudija.imagechooser.StorageOption;
 
 public class DemoActivity extends Activity {
 
+	private final static int CHOOSER_IMAGE_REQUEST_CODE = 100;
 	private ImageChooser chooser;
 	
 	private Button chooseImage;
@@ -31,7 +32,7 @@ public class DemoActivity extends Activity {
 		imageView = (ImageView) findViewById(R.id.imageview_image);
 		
 		// Initialize it
-		chooser = new AlertDialogImageChooser(this, 100);
+		chooser = new AlertDialogImageChooser(this, CHOOSER_IMAGE_REQUEST_CODE);
 		chooser.saveImageTo(StorageOption.INTERNAL_MEMORY, "myDirectory", "myFabulousImage");
 		
 		chooseImage.setOnClickListener(new OnClickListener() {
@@ -45,19 +46,21 @@ public class DemoActivity extends Activity {
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		chooser.onActivityResult(requestCode, resultCode, data, new ImageChooserListener() {
-			
-			@Override
-			public void onResult(Bitmap image) {
-				imageView.setImageBitmap(image);
-			}
-			
-			@Override
-			public void onError(String message) {
-				// Something bad happened :(
-				Toast.makeText(DemoActivity.this, message, Toast.LENGTH_LONG).show();
-			}
-		});
+		if (requestCode == CHOOSER_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+			chooser.onActivityResult(data, new ImageChooserListener() {
+				
+				@Override
+				public void onResult(Bitmap image) {
+					imageView.setImageBitmap(image);
+				}
+				
+				@Override
+				public void onError(String message) {
+					// Something bad happened :(
+					Toast.makeText(DemoActivity.this, message, Toast.LENGTH_LONG).show();
+				}
+			});
+		}
 	}
 	
 }

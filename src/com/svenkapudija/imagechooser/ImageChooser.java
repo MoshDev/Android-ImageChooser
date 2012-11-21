@@ -14,6 +14,6 @@ public interface ImageChooser {
 	public void openGallery();
 	public void openCamera() throws ImageChooserException;
 	
-	public void onActivityResult(int requestCode, int resultCode, Intent data, ImageChooserListener listener);
+	public void onActivityResult(Intent data, ImageChooserListener listener);
 	
 }
