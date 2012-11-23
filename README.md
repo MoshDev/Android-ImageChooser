@@ -1,6 +1,3 @@
-#In development...
---------
-
 What is Android ImageChooser?
 --------
 I'm pretty sure that name is self-descriptive - the idea is to have simple library which will manage choosing images
