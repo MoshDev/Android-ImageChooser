@@ -12,14 +12,17 @@ Put these two permissions inside your AndroidManifest
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-Initialize ImageChooser inside your `Activity`
+Inside your `Activity`
 
-    chooser = new AlertDialogImageChooser(this, CHOOSER_IMAGE_REQUEST_CODE); // CHOOSER_IMAGE_REQUEST_CODE is some number
-    chooser.saveImageTo(StorageOption.SDCARD, "myDirectory", "myFabulousImage"); // Optional
+    // CHOOSER_IMAGE_REQUEST_CODE is some number
+    ImageChooser chooser = new AlertDialogImageChooser(this, CHOOSER_IMAGE_REQUEST_CODE);
 
-and show it on for example button click
+    // Optional
+    chooser.saveImageTo(StorageOption.SDCARD, "myDirectory", "myFabulousImage");
+    chooser.saveImageTo(StorageOption.SDCARD, "anotherDirectory", "myFabulousImageCopy");
 
-	chooseImage.setOnClickListener(new OnClickListener() {
+    // Show it (open AlertDialog) on button click
+	button.setOnClickListener(new OnClickListener() {
 		@Override
 		public void onClick(View arg0) {
 			chooser.show();
@@ -48,3 +51,24 @@ Last step is to override `onActivityResult` and call chooser method which has th
 
 ### SD-Card
 SD-Card is necessary to capture image from camera, otherwise exception will be thrown.
+
+Developed by
+------------
+* Sven Kapuđija
+
+License
+-------
+
+    Copyright 2012 Sven Kapuđija
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
