@@ -18,6 +18,8 @@ import com.svenkapudija.imagechooser.StorageOption;
 
 public class DemoActivity extends Activity {
 
+	private final static String TAG = DemoActivity.class.getName();
+	
 	private final static int CHOOSER_IMAGE_REQUEST_CODE = 100;
 	private ImageChooser chooser;
 	
@@ -33,7 +35,7 @@ public class DemoActivity extends Activity {
 		
 		// Initialize it
 		chooser = new AlertDialogImageChooser(this, CHOOSER_IMAGE_REQUEST_CODE);
-		chooser.saveImageTo(StorageOption.INTERNAL_MEMORY, "myDirectory", "myFabulousImage");
+		chooser.saveImageTo(StorageOption.SDCARD, "myDirectory", "image0");
 		
 		chooseImage.setOnClickListener(new OnClickListener() {
 			@Override

@@ -1,14 +1,16 @@
 package com.svenkapudija.imagechooser;
 
-import com.svenkapudija.imagechooser.exceptions.ImageChooserException;
-import com.svenkapudija.imagechooser.settings.ImageChooserSaveLocation;
+import java.io.File;
 
 import android.content.Intent;
 
+import com.svenkapudija.imagechooser.exceptions.ImageChooserException;
+import com.svenkapudija.imagechooser.settings.ImageChooserSaveLocation;
+
 public interface ImageChooser {
 
-	public ImageChooser saveImageTo(ImageChooserSaveLocation saveSettings);
-	public ImageChooser saveImageTo(StorageOption saveLocation, String directory, String imageName);
+	public File saveImageTo(ImageChooserSaveLocation saveSettings);
+	public File saveImageTo(StorageOption saveLocation, String directory, String imageName);
 	
 	public void show();
 	public void openGallery();
