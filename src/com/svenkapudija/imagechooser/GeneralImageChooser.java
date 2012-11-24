@@ -138,9 +138,23 @@ public abstract class GeneralImageChooser implements ImageChooser {
 				if(result == null) {
 					listener.onError(errorMessage);
 				} else {
-					listener.onResult(result);
+					List<File> savedLocations = new ArrayList<File>();
+					for(ImageChooserSaveLocation saveLocation : saveLocations) {
+						savedLocations.add(saveLocation.getFile(activity));
+					}
+					
+					listener.onResult(result, convertToArray(savedLocations));
 				}
 			}
+			
+			public File[] convertToArray(List<File> files) {
+				File[] ret = new File[files.size()];
+			    for (int i=0; i < ret.length; i++) {
+			        ret[i] = files.get(i);
+			    }
+			    return ret;
+			}
+			
 		}.execute();
 	}
 	

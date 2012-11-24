@@ -1,5 +1,7 @@
 package com.svenkapudija.imagechooser.demo;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,8 +20,6 @@ import com.svenkapudija.imagechooser.StorageOption;
 
 public class DemoActivity extends Activity {
 
-	private final static String TAG = DemoActivity.class.getName();
-	
 	private final static int CHOOSER_IMAGE_REQUEST_CODE = 100;
 	private ImageChooser chooser;
 	
@@ -52,7 +52,7 @@ public class DemoActivity extends Activity {
 			chooser.onActivityResult(data, new ImageChooserListener() {
 				
 				@Override
-				public void onResult(Bitmap image) {
+				public void onResult(Bitmap image, File... savedImages) {
 					imageView.setImageBitmap(image);
 				}
 				
@@ -61,6 +61,7 @@ public class DemoActivity extends Activity {
 					// Something bad happened :(
 					Toast.makeText(DemoActivity.this, message, Toast.LENGTH_LONG).show();
 				}
+				
 			});
 		}
 	}
