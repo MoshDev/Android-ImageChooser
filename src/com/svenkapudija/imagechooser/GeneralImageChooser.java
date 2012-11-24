@@ -65,8 +65,8 @@ public abstract class GeneralImageChooser implements ImageChooser {
 			
 			@Override
 			protected void onPreExecute() {
-				if(settings.showProgressDialog()) {
-					dialog = ProgressDialog.show(activity, null, settings.getProgressDialogMessage(), true, false);
+				if(settings != null && settings.showProgressDialog()) {
+					dialog = ProgressDialog.show(activity, null, activity.getString(R.string.getting_image), true, false);
 				}
 			};
 			

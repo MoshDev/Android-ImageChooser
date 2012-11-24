@@ -13,14 +13,6 @@ public class AlertDialogImageChooser extends GeneralImageChooser {
 
 	public AlertDialogImageChooser(Activity activity, int requestCode, AlertDialogImageChooserSettings settings) {
 		super(activity, requestCode, settings);
-		
-		if(settings == null) {
-			this.settings = new AlertDialogImageChooserSettings(
-					"Choose an image",
-					"Gallery",
-					"Camera"
-			);
-		}
 	}
 	
 	public AlertDialogImageChooser(Activity activity, int requestCode) {
@@ -29,12 +21,10 @@ public class AlertDialogImageChooser extends GeneralImageChooser {
 	
 	@Override
 	public void show() {
-		AlertDialogImageChooserSettings alertDialogSettings = (AlertDialogImageChooserSettings) settings;
-		
-		String[] items = new String[] {alertDialogSettings.getGalleryString(), alertDialogSettings.getCameraString()};
+		String[] items = new String[] {activity.getString(R.string.gallery), activity.getString(R.string.camera)};
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle(alertDialogSettings.getTitle());
+		builder.setTitle(activity.getString(R.string.choose_an_image));
 		builder.setItems(items, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int position) {
