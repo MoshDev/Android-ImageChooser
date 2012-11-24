@@ -42,8 +42,12 @@ Last step is to override `onActivityResult` and call chooser method which has th
 			chooser.onActivityResult(data, new ImageChooserListener() {
 				
 				@Override
-				public void onResult(Bitmap image) {
-					// Do something with image...
+				public void onResult(Bitmap image, File ... savedImages) {
+					// Do something with original image...
+
+					// savedImages is empty if you didn't invoke any
+					// saveImageTo method, otherwise those files will be in the
+					// same order as you were calling the saveImageTo methods
 				}
 				
 				@Override
