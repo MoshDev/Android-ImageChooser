@@ -3,6 +3,7 @@ package com.svenkapudija.imagechooser;
 public enum StorageOption {
 
 	INTERNAL_MEMORY,
-	SDCARD
+	SD_CARD_ROOT,
+	SD_CARD_APP_ROOT
 	
 }

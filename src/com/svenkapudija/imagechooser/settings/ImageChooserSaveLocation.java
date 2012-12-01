@@ -23,15 +23,20 @@ public class ImageChooserSaveLocation {
 	}
 	
 	public File getFile(Context context) {
-		if(storageOption == StorageOption.SDCARD) {
+		if(storageOption == StorageOption.SD_CARD_ROOT) {
 			return new File(
-					Environment.getExternalStorageDirectory().getAbsolutePath() +
-					"/" + path
+					Environment.getExternalStorageDirectory().getAbsolutePath()
+					+ "/" + path
+			);
+		} else if(storageOption == StorageOption.SD_CARD_APP_ROOT) {
+			return new File(
+					context.getExternalFilesDir(null).getAbsolutePath()
+					+ "/" + path
 			);
 		} else {
 			return new File(
-					context.getFilesDir().getAbsolutePath() +
-					"/" + path
+					context.getFilesDir().getAbsolutePath()
+					+ "/" + path
 			);
 		}
 	}

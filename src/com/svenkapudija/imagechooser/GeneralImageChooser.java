@@ -169,7 +169,7 @@ public abstract class GeneralImageChooser implements ImageChooser {
 			throw new SDCardNotFoundException("SDCard is not mounted.");
 		}
 		
-		tmpCameraSaveLocation = new ImageChooserSaveLocation(StorageOption.SDCARD, "tmp", Long.toString(new Date().getTime()));
+		tmpCameraSaveLocation = new ImageChooserSaveLocation(StorageOption.SD_CARD_APP_ROOT, "tmp", Long.toString(new Date().getTime()));
 		File saveTo = tmpCameraSaveLocation.getFile(activity);
 		
 		// Create directories
