@@ -23,8 +23,8 @@ Put these two permissions inside your AndroidManifest
     ImageChooser chooser = new AlertDialogImageChooser(this, CHOOSER_IMAGE_REQUEST_CODE);
 
     // Optional
-    chooser.saveImageTo(StorageOption.SDCARD, "myDirectory", "myFabulousImage");
-    chooser.saveImageTo(StorageOption.SDCARD, "anotherDirectory", "myFabulousImageCopy");
+    chooser.saveImageTo(StorageOption.SD_CARD_APP_ROOT, "myDirectory", "myFabulousImage");
+    chooser.saveImageTo(StorageOption.SD_CARD_ROOT, "anotherDirectory", "myFabulousImageCopy");
 
     // Show it (open AlertDialog) on button click
 	button.setOnClickListener(new OnClickListener() {
