@@ -7,8 +7,8 @@ or SD-Card) and return the `Bitmap` image back.
 Usage
 --------
 
-Import a project into Eclipse and reference to it from your project as an Android Library project for more info visit
-[Referencing Library Project](http://developer.android.com/tools/projects/projects-eclipse.html#ReferencingLibraryProject).
+Copy-paste `.jar` file to your `/libs` folder and then in Eclipse right click on it and `Add to build path`.
+> [Download .jar - commit ad2e3e2d82921366966ab6cf139f96af5087b80e](http://www.svenkapudija.com/projects/imagechooser-ad2e3e2d82921366966ab6cf139f96af5087b80e.jar)
 
 ### Permissions
 
