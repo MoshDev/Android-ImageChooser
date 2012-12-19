@@ -12,10 +12,9 @@ Import a project into Eclipse and reference to it from your project as an Androi
 
 ### Permissions
 
-Put these two permissions inside your AndroidManifest
+Put these permission inside your AndroidManifest
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 ### Inside your Activity
 
@@ -23,8 +22,7 @@ Put these two permissions inside your AndroidManifest
     ImageChooser chooser = new AlertDialogImageChooser(this, CHOOSER_IMAGE_REQUEST_CODE);
 
     // Optional
-    chooser.saveImageTo(StorageOption.SDCARD, "myDirectory", "myFabulousImage");
-    chooser.saveImageTo(StorageOption.SDCARD, "anotherDirectory", "myFabulousImageCopy");
+    chooser.saveImageTo(StorageOption.SD_CARD_APP_ROOT, "myDirectory", "myFabulousImage");
 
     // Show it (open AlertDialog) on button click
 	button.setOnClickListener(new OnClickListener() {
@@ -42,12 +40,11 @@ Last step is to override `onActivityResult` and call chooser method which has th
 			chooser.onActivityResult(data, new ImageChooserListener() {
 				
 				@Override
-				public void onResult(Bitmap image, File ... savedImages) {
+				public void onResult(Bitmap image, File savedImage) {
 					// Do something with original image...
 
-					// savedImages is empty if you didn't invoke any
-					// saveImageTo method, otherwise those files will be in the
-					// same order as you were calling the saveImageTo methods
+					// savedImage is null if you didn't invoke any
+					// saveImageTo method
 				}
 				
 				@Override
