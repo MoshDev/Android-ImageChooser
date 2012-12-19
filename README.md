@@ -8,7 +8,7 @@ Usage
 --------
 
 Copy-paste `.jar` file to your `/libs` folder and then in Eclipse right click on it and `Add to build path`.
-> [Download .jar - commit ad2e3e2d82921366966ab6cf139f96af5087b80e](http://www.svenkapudija.com/projects/imagechooser-ad2e3e2d82921366966ab6cf139f96af5087b80e.jar)
+> [Download .jar - commit fe13c1837660e0e548f3010499bb8df2eec44f7b](http://www.svenkapudija.com/projects/imagechooser-fe13c1837660e0e548f3010499bb8df2eec44f7b.jar)
 
 ### Permissions
 
