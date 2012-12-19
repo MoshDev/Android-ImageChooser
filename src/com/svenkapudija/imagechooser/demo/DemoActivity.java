@@ -52,7 +52,7 @@ public class DemoActivity extends Activity {
 			chooser.onActivityResult(data, new ImageChooserListener() {
 				
 				@Override
-				public void onResult(Bitmap image, File... savedImages) {
+				public void onResult(Bitmap image, File savedImage) {
 					imageView.setImageBitmap(image);
 				}
 				

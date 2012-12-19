@@ -7,16 +7,11 @@ import android.content.DialogInterface.OnClickListener;
 
 import com.svenkapudija.imagechooser.exceptions.PermissionNotFoundException;
 import com.svenkapudija.imagechooser.exceptions.SDCardNotFoundException;
-import com.svenkapudija.imagechooser.settings.AlertDialogImageChooserSettings;
 
 public class AlertDialogImageChooser extends GeneralImageChooser {
 
-	public AlertDialogImageChooser(Activity activity, int requestCode, AlertDialogImageChooserSettings settings) {
-		super(activity, requestCode, settings);
-	}
-	
 	public AlertDialogImageChooser(Activity activity, int requestCode) {
-		this(activity, requestCode, null);
+		super(activity, requestCode);
 	}
 	
 	@Override

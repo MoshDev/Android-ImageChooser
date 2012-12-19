@@ -5,12 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -25,34 +22,31 @@ import android.provider.MediaStore.Images.Media;
 import com.svenkapudija.imagechooser.exceptions.PermissionNotFoundException;
 import com.svenkapudija.imagechooser.exceptions.SDCardNotFoundException;
 import com.svenkapudija.imagechooser.settings.ImageChooserSaveLocation;
-import com.svenkapudija.imagechooser.settings.ImageChooserSettings;
 
 public abstract class GeneralImageChooser implements ImageChooser {
 
 	protected Activity activity;
 	protected int requestCode;
-	protected ImageChooserSettings settings;
 	
 	private ImageChooserSaveLocation tmpCameraSaveLocation;
-	private List<ImageChooserSaveLocation> saveLocations = new ArrayList<ImageChooserSaveLocation>();
+	private ImageChooserSaveLocation saveLocation;
 	
 	private ImageSource source;
 	
-	public GeneralImageChooser(Activity activity, int requestCode, ImageChooserSettings settings) {
+	public GeneralImageChooser(Activity activity, int requestCode) {
 		this.activity = activity;
 		this.requestCode = requestCode;
-		this.settings = settings;
 	}
 	
 	public File saveImageTo(ImageChooserSaveLocation saveLocation) {
-		this.saveLocations.add(saveLocation);
+		this.saveLocation = saveLocation;
 		return saveLocation.getFile(activity);
 	}
 	
 	@Override
 	public File saveImageTo(StorageOption storageOption, String directory, String imageName) {
 		ImageChooserSaveLocation location = new ImageChooserSaveLocation(storageOption, directory, imageName);
-		this.saveLocations.add(location);
+		this.saveLocation = location;
 		return location.getFile(activity);
 	}
 	
@@ -61,14 +55,6 @@ public abstract class GeneralImageChooser implements ImageChooser {
 		new AsyncTask<Integer, Integer, Bitmap>() {
 
 			private String errorMessage;
-			private ProgressDialog dialog;
-			
-			@Override
-			protected void onPreExecute() {
-				if(settings != null && settings.showProgressDialog()) {
-					dialog = ProgressDialog.show(activity, null, activity.getString(R.string.getting_image), true, false);
-				}
-			};
 			
 			@Override
 			protected Bitmap doInBackground(Integer... params) {
@@ -91,12 +77,14 @@ public abstract class GeneralImageChooser implements ImageChooser {
 					File tmpFile = tmpCameraSaveLocation.getFile(activity);
 					photo = BitmapFactory.decodeFile(tmpFile.getAbsolutePath());
 					
-					try {
-						writePhotoToSaveLocations(photo);
-					} catch (IOException e) {
-						e.printStackTrace();
-						errorMessage = "ImageSource: " + source + " - IOException.";
-						return null;
+					if(saveLocation != null) {
+						try {
+							writePhotoToSaveLocations(photo);
+						} catch (IOException e) {
+							e.printStackTrace();
+							errorMessage = "ImageSource: " + source + " - IOException.";
+							return null;
+						}
 					}
 					
 					tmpFile.delete();
@@ -110,12 +98,10 @@ public abstract class GeneralImageChooser implements ImageChooser {
 			}
 
 			private void writePhotoToSaveLocations(Bitmap photo) throws IOException {
-				for(ImageChooserSaveLocation saveLocation : saveLocations) {
-					File file = saveLocation.getFile(activity);
-					new File(file.getParent()).mkdirs();
-					
-					writeToFile(photo, file);
-				}
+				File file = saveLocation.getFile(activity);
+				new File(file.getParent()).mkdirs();
+				
+				writeToFile(photo, file);
 			}
 			
 			private void writeToFile(Bitmap photo, File file) throws IOException {
@@ -131,28 +117,16 @@ public abstract class GeneralImageChooser implements ImageChooser {
 			protected void onPostExecute(Bitmap result) {
 				super.onPostExecute(result);
 				
-				if(dialog != null) {
-					dialog.cancel();
-				}
-				
 				if(result == null) {
 					listener.onError(errorMessage);
 				} else {
-					List<File> savedLocations = new ArrayList<File>();
-					for(ImageChooserSaveLocation saveLocation : saveLocations) {
-						savedLocations.add(saveLocation.getFile(activity));
+					File file = null;
+					if(saveLocation != null) {
+						file = saveLocation.getFile(activity);
 					}
 					
-					listener.onResult(result, convertToArray(savedLocations));
+					listener.onResult(result, file);
 				}
-			}
-			
-			public File[] convertToArray(List<File> files) {
-				File[] ret = new File[files.size()];
-			    for (int i=0; i < ret.length; i++) {
-			        ret[i] = files.get(i);
-			    }
-			    return ret;
 			}
 			
 		}.execute();
