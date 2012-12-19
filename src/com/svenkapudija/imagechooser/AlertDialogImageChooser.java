@@ -10,16 +10,20 @@ import com.svenkapudija.imagechooser.exceptions.SDCardNotFoundException;
 
 public class AlertDialogImageChooser extends GeneralImageChooser {
 
+	private String galleryLabel = "Gallery";
+	private String cameraLabel = "Camera";
+	private String chooseAnImageLabel = "Choose an image";
+	
 	public AlertDialogImageChooser(Activity activity, int requestCode) {
 		super(activity, requestCode);
 	}
 	
 	@Override
 	public void show() {
-		String[] items = new String[] {activity.getString(R.string.gallery), activity.getString(R.string.camera)};
+		String[] items = new String[] {galleryLabel, cameraLabel};
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle(activity.getString(R.string.choose_an_image));
+		builder.setTitle(chooseAnImageLabel);
 		builder.setItems(items, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int position) {
@@ -55,6 +59,18 @@ public class AlertDialogImageChooser extends GeneralImageChooser {
 		});
 		
 		builder.create().show();
+	}
+	
+	public void setGalleryLabel(String galleryLabel) {
+		this.galleryLabel = galleryLabel;
+	}
+	
+	public void setCameraLabel(String cameraLabel) {
+		this.cameraLabel = cameraLabel;
+	}
+	
+	public void setChooseAnImageLabel(String chooseAnImageLabel) {
+		this.chooseAnImageLabel = chooseAnImageLabel;
 	}
 	
 }

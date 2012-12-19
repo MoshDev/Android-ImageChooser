@@ -1,7 +1,3 @@
 <resources>
     <string name="app_name">ImageChooser</string>
-    <string name="getting_image">Getting image...</string>
-    <string name="gallery">Gallery</string>
-    <string name="camera">Camera</string>
-    <string name="choose_an_image">Choose an image</string>
 </resources>
