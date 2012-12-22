@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -51,7 +52,7 @@ public abstract class GeneralImageChooser implements ImageChooser {
 	}
 	
 	@Override
-	public void onActivityResult(final Intent data, final ImageChooserListener listener) {
+	public void onActivityResult(final Context context, final Intent data, final ImageChooserListener listener) {
 		new AsyncTask<Integer, Integer, Bitmap>() {
 
 			private String errorMessage;
@@ -60,9 +61,9 @@ public abstract class GeneralImageChooser implements ImageChooser {
 			protected Bitmap doInBackground(Integer... params) {
 				Bitmap photo = null;
 
-				if (source == ImageSource.GALLERY) {
+				if (data != null && data.getData() != null) {
 					try {
-						photo = Media.getBitmap(activity.getContentResolver(), data.getData());
+						photo = Media.getBitmap(context.getContentResolver(), data.getData());
 						writePhotoToSaveLocations(photo);
 					} catch (FileNotFoundException e1) {
 						e1.printStackTrace();
@@ -73,8 +74,8 @@ public abstract class GeneralImageChooser implements ImageChooser {
 						errorMessage = "ImageSource: " + source + " - IOException at " + data.toString() + ".";
 						return null;
 					}
-				} else if (source == ImageSource.CAMERA) {
-					File tmpFile = tmpCameraSaveLocation.getFile(activity);
+				} else {
+					File tmpFile = new ImageChooserSaveLocation(StorageOption.SD_CARD_APP_ROOT, "tmp", "my_temporary_image").getFile(context);
 					photo = BitmapFactory.decodeFile(tmpFile.getAbsolutePath());
 					
 					if(saveLocation != null) {
@@ -88,17 +89,13 @@ public abstract class GeneralImageChooser implements ImageChooser {
 					}
 					
 					tmpFile.delete();
-				} else {
-					// Unknown source
-					errorMessage = "Unknown image source.";
-					return null;
 				}
 
 				return photo;
 			}
 
 			private void writePhotoToSaveLocations(Bitmap photo) throws IOException {
-				File file = saveLocation.getFile(activity);
+				File file = saveLocation.getFile(context);
 				new File(file.getParent()).mkdirs();
 				
 				writeToFile(photo, file);
@@ -122,7 +119,7 @@ public abstract class GeneralImageChooser implements ImageChooser {
 				} else {
 					File file = null;
 					if(saveLocation != null) {
-						file = saveLocation.getFile(activity);
+						file = saveLocation.getFile(context);
 					}
 					
 					listener.onResult(result, file);
@@ -143,7 +140,7 @@ public abstract class GeneralImageChooser implements ImageChooser {
 			throw new SDCardNotFoundException("SDCard is not mounted.");
 		}
 		
-		tmpCameraSaveLocation = new ImageChooserSaveLocation(StorageOption.SD_CARD_APP_ROOT, "tmp", Long.toString(new Date().getTime()));
+		tmpCameraSaveLocation = new ImageChooserSaveLocation(StorageOption.SD_CARD_APP_ROOT, "tmp", "my_temporary_image");
 		File saveTo = tmpCameraSaveLocation.getFile(activity);
 		
 		// Create directories

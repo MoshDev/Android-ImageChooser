@@ -2,6 +2,7 @@ package com.svenkapudija.imagechooser;
 
 import java.io.File;
 
+import android.content.Context;
 import android.content.Intent;
 
 import com.svenkapudija.imagechooser.exceptions.ImageChooserException;
@@ -16,6 +17,6 @@ public interface ImageChooser {
 	public void openGallery();
 	public void openCamera() throws ImageChooserException;
 	
-	public void onActivityResult(Intent data, ImageChooserListener listener);
+	public void onActivityResult(Context activity, Intent data, ImageChooserListener listener);
 	
 }
