@@ -4,12 +4,6 @@ I'm pretty sure that name is self-descriptive - the idea is to have simple libra
 from different sources (`Gallery`, `Camera`), maybe `save it` to some location (internal memory
 or SD-Card) and return the `Bitmap` image back.
 
-Usage
---------
-
-Copy-paste `.jar` file to your `/libs` folder and then in Eclipse right click on it and `Add to build path`.
-> [Download .jar - commit fe13c1837660e0e548f3010499bb8df2eec44f7b](http://www.svenkapudija.com/projects/imagechooser-fe13c1837660e0e548f3010499bb8df2eec44f7b.jar)
-
 ### Permissions
 
 Put these permission inside your AndroidManifest
